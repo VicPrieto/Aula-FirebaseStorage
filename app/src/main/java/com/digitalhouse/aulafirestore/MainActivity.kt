@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.squareup.picasso.Picasso
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -41,17 +42,41 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == CODE_IMG) {
-            val uploadFile = storageReference.putFile(data!!.data!!).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val imgUri = task.result
-                    Log.i("TAG", imgUri.toString())
+        if(requestCode == CODE_IMG){
+            alertDialog.show()
+            val uploadFile = storageReference.putFile(data!!.data!!)
+            val task = uploadFile.continueWithTask{task ->
+                if(task.isSuccessful)
+                {
+                    Toast.makeText(this, "Imagem Carrregada com sucesso!", Toast.LENGTH_SHORT).show()
                 }
-            }.addOnFailureListener {
-                Toast.makeText(this, "Upload falhou", Toast.LENGTH_SHORT).show()
+                storageReference!!.downloadUrl
+            }.addOnCompleteListener{task->
+                if(task.isSuccessful){
+                    val downloadUri = task.result
+                    val url = downloadUri!!.toString().substring(0, downloadUri.toString().indexOf("&token"))
+                    Log.i("URL da Imagem", url)
+                    alertDialog.dismiss()
+                    Picasso.get().load(url).into(ivRes)
+                }
             }
-
         }
     }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//
+//        if (requestCode == CODE_IMG) {
+//            val uploadFile = storageReference.putFile(data!!.data!!).addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    val imgUri = task.result
+//                    Log.i("TAG", imgUri.toString())
+//                }
+//            }.addOnFailureListener {
+//                Toast.makeText(this, "Upload falhou", Toast.LENGTH_SHORT).show()
+//            }
+//
+//        }
+//    }
 
 }

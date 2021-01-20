@@ -19,7 +19,7 @@
         android:background="@color/teal_200"/>
 
     <ImageView
-        android:id="@+id/iv"
+        android:id="@+id/ivRes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
